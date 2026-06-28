@@ -1,30 +1,16 @@
-// CAPA 1 — REPOSITORY (Cuentas)
-const { supabase } = require('../config/supabase');
+const { pool } = require('../config/db');
 
 exports.getCuentasByUserId = async (userId) => {
-  const { data, error } = await supabase
-    .from('cuentas')
-    .select('*')
-    .eq('user_id', userId);
-  if (error) throw new Error(error.message);
-  return data;
+  const { rows } = await pool.query('SELECT * FROM cuentas WHERE user_id = $1', [userId]);
+  return rows;
 };
 
 exports.getTarjetasByUserId = async (userId) => {
-  const { data, error } = await supabase
-    .from('tarjetas')
-    .select('*')
-    .eq('user_id', userId);
-  if (error) throw new Error(error.message);
-  return data;
+  const { rows } = await pool.query('SELECT * FROM tarjetas WHERE user_id = $1', [userId]);
+  return rows;
 };
 
 exports.getMovimientosByCuentaId = async (cuentaId) => {
-  const { data, error } = await supabase
-    .from('transacciones')
-    .select('*')
-    .eq('cuenta_id', cuentaId)
-    .order('fecha', { ascending: false });
-  if (error) throw new Error(error.message);
-  return data;
+  const { rows } = await pool.query('SELECT * FROM movimientos WHERE cuenta_id = $1 ORDER BY creado_en DESC', [cuentaId]);
+  return rows;
 };
